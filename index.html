@@ -229,20 +229,12 @@
                     <label>Total (Auto)</label>
                     <input type="text" id="in-sum-total" value="0" readonly style="font-weight: 600; color: #007aff;">
                 </div>
-                <div class="ios-row">
-                    <label>Payment Method</label>
-                    <input type="text" id="in-sum-payment" value="Cash" oninput="updateReceipt()">
-                </div>
             </div>
         </div>
 
         <div class="form-section">
             <div class="form-section-title">Other Data</div>
             <div class="ios-input-group">
-                <div class="ios-row">
-                    <label>QRCode Data</label>
-                    <input type="text" id="in-other-qr" placeholder="url, text, Anything" oninput="updateReceipt()">
-                </div>
                 <div class="ios-row">
                     <label>Footer Message</label>
                     <textarea id="in-other-footer" rows="2" oninput="updateReceipt()">Thank you for your purchase &hearts;
@@ -274,11 +266,17 @@ BCA 0375514741 A/N Syifana Rahma</textarea>
                 <!-- Items lists updated dynamically -->
             </div>
 
+            <!-- Ongkos Kirim pada Struk -->
+            <div class="flex" style="margin-top: 10px;">
+                <div>Ongkos Kirim</div>
+                <div id="out-receipt-ongkir">IDR 15.000</div>
+            </div>
+
             <div class="divider"></div>
 
             <div class="flex bold">
                 <div style="font-size: 16px;">Total</div>
-                <div style="font-size: 16px;">IDR<span id="out-grand-total">64,500</span></div>
+                <div style="font-size: 16px;">IDR <span id="out-grand-total">64.500</span></div>
             </div>
 
             <br><br>
@@ -298,9 +296,9 @@ BCA 0375514741 A/N Syifana Rahma</pre>
         { id: Date.now(), name: "Pampis Cakalang 250gr (PS)", price: 49500, quantity: 1 }
     ];
 
-    // Format currency to IDR 49,500
+    // Format currency to IDR 49.500 (Menggunakan format Indonesia / titik)
     function formatCurrency(amount) {
-        return amount.toLocaleString('en-US', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace('IDR', 'IDR ');
+        return 'IDR ' + amount.toLocaleString('id-ID');
     }
 
     // Format Date from input to "20 Aug 2026"
@@ -398,11 +396,14 @@ BCA 0375514741 A/N Syifana Rahma</pre>
         const subtotalSum = itemsState.reduce((sum, item) => sum + (item.price * item.quantity), 0);
         document.getElementById('in-sum-subtotal').value = formatCurrency(subtotalSum);
 
-        // Grand Total
+        // Update Ongkos Kirim pada Struk
         const shipping = parseInt(document.getElementById('in-sum-ongkir').value) || 0;
+        document.getElementById('out-receipt-ongkir').innerText = formatCurrency(shipping);
+
+        // Grand Total
         const totalSum = subtotalSum + shipping;
         document.getElementById('in-sum-total').value = formatCurrency(totalSum);
-        document.getElementById('out-grand-total').innerText = formatCurrency(totalSum).replace('IDR', '');
+        document.getElementById('out-grand-total').innerText = formatCurrency(totalSum).replace('IDR ', '');
     }
 
     // Image capture and download
