@@ -4,12 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Struk Digital Tualang Tanur</title>
-    <!-- Tambahkan library html2canvas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f2f2f7;
+            background-color: #f2f2f7; /* iOS background color */
             margin: 0;
             display: flex;
             justify-content: center;
@@ -18,59 +17,87 @@
         .container {
             display: flex;
             gap: 40px;
-            max-width: 900px;
+            max-width: 1000px;
             width: 100%;
             flex-wrap: wrap;
+            align-items: flex-start;
         }
-        /* Form Styling (Kiri) */
+        
+        /* --- iOS Form Styling --- */
         .form-section {
             flex: 1;
-            min-width: 300px;
+            min-width: 320px;
+            max-width: 450px;
+        }
+        .ios-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .ios-header h2 { margin: 0; font-size: 20px; font-weight: 600; }
+        .section-title {
+            color: #007aff;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin: 20px 0 8px 15px;
+        }
+        .ios-card {
             background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
-        .form-section h3 { margin-top: 0; color: #007aff; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-size: 13px; color: #8e8e93; margin-bottom: 5px; font-weight: 500; }
-        input[type="text"], input[type="number"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #e5e5ea;
-            border-radius: 8px;
-            font-size: 15px;
-            box-sizing: border-box;
-            background-color: #fafafa;
+        .ios-input-group {
+            display: flex;
+            flex-direction: column;
+            padding: 12px 15px;
+            border-bottom: 1px solid #e5e5ea;
         }
-        button.action-btn {
+        .ios-input-group:last-child { border-bottom: none; }
+        .ios-input-group label {
+            font-size: 12px;
+            color: #8e8e93;
+            margin-bottom: 4px;
+        }
+        .ios-input-group input {
+            border: none;
+            font-size: 16px;
+            outline: none;
+            background: transparent;
+            color: #000;
+        }
+        .download-btn {
             background-color: #007aff;
             color: white;
             border: none;
-            padding: 12px;
+            padding: 14px;
             width: 100%;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            margin-top: 10px;
+            margin-top: 25px;
+            box-shadow: 0 4px 6px rgba(0, 122, 255, 0.2);
         }
-        button.action-btn:hover { background-color: #0056b3; }
+        .download-btn:active { background-color: #0056b3; }
 
-        /* Receipt Styling (Kanan) */
+        /* --- Receipt Styling --- */
         .receipt-section {
             display: flex;
             flex-direction: column;
             align-items: center;
+            flex: 1;
         }
         .struk-kertas {
             background-color: white;
-            width: 340px;
+            width: 320px;
             padding: 30px;
             font-family: 'Courier New', Courier, monospace;
             font-size: 14px;
             color: #000;
-            box-shadow: 0px 8px 16px rgba(0,0,0,0.1);
+            box-shadow: 0px 8px 20px rgba(0,0,0,0.15);
         }
         .center { text-align: center; }
         .flex { display: flex; justify-content: space-between; margin-bottom: 5px; }
@@ -82,27 +109,39 @@
 <body>
 
 <div class="container">
-    <!-- Area Input Form -->
+    <!-- Area Input Form (iOS Style) -->
     <div class="form-section">
-        <h3>Receipt Details</h3>
-        <div class="form-group">
-            <label>Receipt ID</label>
-            <input type="text" id="in-id" value="TNR00121" oninput="updateStruk()">
+        <div class="ios-header">
+            <span style="color: #007aff; font-size: 16px;">&lt;</span>
+            <h2>Receipt</h2>
+            <span style="color: #007aff; font-size: 16px;">Save</span>
         </div>
-        <div class="form-group">
-            <label>Customer Name</label>
-            <input type="text" id="in-cust" value="Customer" oninput="updateStruk()">
+
+        <div class="section-title">Receipt Info</div>
+        <div class="ios-card">
+            <div class="ios-input-group">
+                <label>Receipt ID</label>
+                <input type="text" id="in-id" value="TNR00121" oninput="updateStruk()">
+            </div>
+            <div class="ios-input-group">
+                <label>Customer Name</label>
+                <input type="text" id="in-cust" value="Nicken" oninput="updateStruk()">
+            </div>
         </div>
-        <div class="form-group">
-            <label>Harga Item (IDR)</label>
-            <input type="number" id="in-harga" value="49500" oninput="updateStruk()">
-        </div>
-        <div class="form-group">
-            <label>Ongkos Kirim (IDR)</label>
-            <input type="number" id="in-ongkir" value="15000" oninput="updateStruk()">
+
+        <div class="section-title">Items</div>
+        <div class="ios-card">
+            <div class="ios-input-group">
+                <label>Harga Pampis Cakalang (IDR)</label>
+                <input type="number" id="in-harga" value="49500" oninput="updateStruk()">
+            </div>
+            <div class="ios-input-group">
+                <label>Ongkos Kirim (IDR)</label>
+                <input type="number" id="in-ongkir" value="15000" oninput="updateStruk()">
+            </div>
         </div>
         
-        <button class="action-btn" onclick="downloadImage()">⬇ Download Struk (PNG)</button>
+        <button class="download-btn" onclick="downloadImage()">Download as Image</button>
     </div>
 
     <!-- Area Preview Struk -->
@@ -110,14 +149,14 @@
         <div class="struk-kertas" id="struk-preview">
             <div class="center judul">TUALANG TANUR</div>
             <div class="center">
-                Jl. Kaliurang km. 10, Ngaglik,<br>Sleman<br>
+                Jl. Kaliurang km. 10, Ngaglik, Sleman<br>
                 +6285729317184<br>
                 Instagram: @tualang.tanur
             </div>
             
             <br>
             <div class="flex">
-                <div><span id="out-id">TNR00121</span> -<br><span id="out-cust">Customer</span></div>
+                <div><span id="out-id">TNR00121</span> -<br><span id="out-cust">Nicken</span></div>
                 <div id="out-date"></div>
             </div>
 
@@ -152,12 +191,12 @@
 </div>
 
 <script>
-    // Set format tanggal otomatis
+    // Format tanggal
     const now = new Date();
     const options = { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
     document.getElementById('out-date').innerText = now.toLocaleString('en-GB', options).replace(',', '');
 
-    // Fungsi update angka secara real-time
+    // Live update angka
     function updateStruk() {
         const id = document.getElementById('in-id').value;
         const cust = document.getElementById('in-cust').value;
@@ -177,13 +216,12 @@
         document.getElementById('out-grand-total').innerText = total.toLocaleString('en-US');
     }
 
-    // Fungsi untuk men-download elemen HTML menjadi gambar PNG
+    // Fitur Download Gambar Resolusi Tinggi
     function downloadImage() {
         const struk = document.getElementById('struk-preview');
-        // Setting scale ke 2 agar hasil gambarnya jernih (high resolution)
-        html2canvas(struk, { scale: 2, backgroundColor: "#ffffff" }).then(canvas => {
+        html2canvas(struk, { scale: 3, backgroundColor: "#ffffff" }).then(canvas => {
             const link = document.createElement('a');
-            link.download = 'Struk-' + document.getElementById('in-id').value + '.png';
+            link.download = 'Struk_' + document.getElementById('in-id').value + '.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
         });
