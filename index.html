@@ -110,8 +110,25 @@
             border-radius: 8px;
             margin-bottom: 10px;
         }
-        .form-item-row input { flex: 1; min-width: 50px; }
-        .remove-item { color: #ff3b30; cursor: pointer; font-size: 20px; font-weight: bold;}
+        /* Custom dropdown styling */
+        .form-item-row select {
+            flex: 1;
+            min-width: 150px;
+            padding: 8px;
+            border: 1px solid #d1d1d6;
+            border-radius: 6px;
+            font-size: 15px;
+            background-color: white;
+            outline: none;
+        }
+        .form-item-row input { 
+            padding: 8px;
+            border: 1px solid #d1d1d6;
+            border-radius: 6px;
+            font-size: 15px;
+            text-align: center;
+        }
+        .remove-item { color: #ff3b30; cursor: pointer; font-size: 20px; font-weight: bold; margin-top: 5px;}
 
         /* Receipt Styling (monospace/thermal) */
         .right-preview {
@@ -173,8 +190,9 @@
                 <div class="ios-row">
                     <label>Created Datetime</label>
                     <div style="display: flex; gap: 10px;">
-                        <input type="date" id="in-date" value="2026-08-20" oninput="updateReceipt()">
-                        <input type="time" id="in-time" value="19:32" oninput="updateReceipt()">
+                        <!-- value dikosongkan karena akan diisi otomatis oleh JS -->
+                        <input type="date" id="in-date" oninput="updateReceipt()">
+                        <input type="time" id="in-time" oninput="updateReceipt()">
                     </div>
                 </div>
             </div>
@@ -190,10 +208,6 @@
                 <div class="ios-row">
                     <label>Business Phone</label>
                     <input type="tel" id="in-bus-phone" value="+6285729317184" oninput="updateReceipt()">
-                </div>
-                <div class="ios-row">
-                    <label>Business Email</label>
-                    <input type="email" id="in-bus-email" placeholder="me@example.com" oninput="updateReceipt()">
                 </div>
                 <div class="ios-row">
                     <label>Business Website</label>
@@ -247,10 +261,11 @@ BCA 0375514741 A/N Syifana Rahma</textarea>
     <!-- Right Column: Live Preview (monospace style) -->
     <div class="right-preview">
         <div class="receipt-card" id="receipt-preview-area">
+            
             <div class="center">
-        <img src="logo.png" style="max-width: 220px; margin-bottom: 10px;">
-                <div class="center bold judul" id="out-bus-name" style="display: none;">TUALANG TANUR</div>
-    </div>
+                <img src="logo.png" style="max-width: 220px; margin-bottom: 10px;">
+            </div>
+            <div class="center bold judul" id="out-bus-name" style="display: none;">TUALANG TANUR</div>
             <div class="center">
                 <div id="out-bus-addr">Jl. Kaliurang km. 10, Ngaglik,<br>Sleman</div>
                 <div id="out-bus-phone">+6285729317184</div>
@@ -260,7 +275,7 @@ BCA 0375514741 A/N Syifana Rahma</textarea>
             <br>
             <div class="flex">
                 <div><span id="out-id">TNR00121</span> -<br>Customer</div>
-                <div id="out-datetime" style="text-align: right;">20 Aug 2026 7:32 pm</div>
+                <div id="out-datetime" style="text-align: right;"></div>
             </div>
 
             <div class="divider"></div>
@@ -294,12 +309,39 @@ BCA 0375514741 A/N Syifana Rahma</pre>
 </div>
 
 <script>
+    // Daftar menu dan harganya
+    const menuList = {
+        "Pampis Cakalang PB 250gr": 49500,
+        "Pampis Cakalang PS 250gr": 49500,
+        "Pampis Cakalang TP 250gr": 49500,
+        "Pampis Cakalang PB 125gr": 26000,
+        "Pampis Cakalang PS 125gr": 26000,
+        "Pampis Cakalang TP 125gr": 26000,
+        "Gyoza 10pcs": 20000
+    };
+
     // State of items
     let itemsState = [
-        { id: Date.now(), name: "Pampis Cakalang 250gr (PS)", price: 49500, quantity: 1 }
+        { id: Date.now(), name: "Pampis Cakalang PS 250gr", price: 49500, quantity: 1 }
     ];
 
-    // Format currency to IDR 49.500 (Menggunakan format Indonesia / titik)
+    // Fungsi otomatis set jam dan tanggal saat ini
+    function setCurrentDateTime() {
+        const now = new Date();
+        
+        // Format YYYY-MM-DD untuk input date
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        document.getElementById('in-date').value = `${year}-${month}-${day}`;
+
+        // Format HH:MM untuk input time
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        document.getElementById('in-time').value = `${hours}:${minutes}`;
+    }
+
+    // Format currency to IDR 49.500 
     function formatCurrency(amount) {
         return 'IDR ' + amount.toLocaleString('id-ID');
     }
@@ -321,7 +363,6 @@ BCA 0375514741 A/N Syifana Rahma</pre>
 
     // Live update dynamic text on the receipt
     function updateReceipt() {
-        // Direct text fields
         document.getElementById('out-bus-name').innerText = document.getElementById('in-bus-name').value;
         document.getElementById('out-bus-phone').innerText = document.getElementById('in-bus-phone').value;
         document.getElementById('out-bus-web').innerText = document.getElementById('in-bus-web').value;
@@ -329,14 +370,12 @@ BCA 0375514741 A/N Syifana Rahma</pre>
         document.getElementById('out-id').innerText = document.getElementById('in-id').value;
         document.getElementById('out-other-footer').innerText = document.getElementById('in-other-footer').value;
 
-        // Datetime formatting
         const dateValue = document.getElementById('in-date').value;
         const timeValue = document.getElementById('in-time').value;
         if (dateValue && timeValue) {
             document.getElementById('out-datetime').innerHTML = formatDate(dateValue) + " " + formatTime(timeValue);
         }
 
-        // Re-render items and totals
         renderReceiptItems();
         updateCalculations();
     }
@@ -355,55 +394,77 @@ BCA 0375514741 A/N Syifana Rahma</pre>
         });
     }
 
-    // Add a new item to the state and update everything
+    // Add a new item to the state
     function addFormItem() {
-        itemsState.push({ id: Date.now(), name: "Pampis Cakalang TP", price: 49500, quantity: 1 });
+        itemsState.push({ id: Date.now(), name: "Pampis Cakalang PB 250gr", price: 49500, quantity: 1 });
         renderFormItems();
         updateReceipt();
     }
 
-    // Remove an item and update everything
+    // Remove an item 
     function removeFormItem(idToRemove) {
         itemsState = itemsState.filter(item => item.id !== idToRemove);
         renderFormItems();
         updateReceipt();
     }
 
-    // Handle price or quantity change per item
-    function handleItemInputChange(id, field, value) {
+    // Handle dropdown selection change
+    function handleMenuChange(id, selectedName) {
         const itemIndex = itemsState.findIndex(item => item.id === id);
         if (itemIndex !== -1) {
-            itemsState[itemIndex][field] = field === 'name' ? value : parseInt(value) || 0;
+            itemsState[itemIndex].name = selectedName;
+            // Update harga otomatis berdasarkan pilihan menu
+            itemsState[itemIndex].price = menuList[selectedName]; 
+            
+            renderFormItems(); // Render ulang form agar harga di kotak ikut berubah
             updateReceipt();
         }
     }
 
-    // Render item rows in the input form (to allow editing and removal)
+    // Handle quantity or manual price change
+    function handleItemInputChange(id, field, value) {
+        const itemIndex = itemsState.findIndex(item => item.id === id);
+        if (itemIndex !== -1) {
+            itemsState[itemIndex][field] = parseInt(value) || 0;
+            updateReceipt();
+        }
+    }
+
+    // Generate option list for dropdown
+    function generateMenuOptions(selectedName) {
+        let optionsHtml = '';
+        for (const [menuName, menuPrice] of Object.entries(menuList)) {
+            const isSelected = menuName === selectedName ? 'selected' : '';
+            optionsHtml += `<option value="${menuName}" ${isSelected}>${menuName}</option>`;
+        }
+        return optionsHtml;
+    }
+
+    // Render item rows in the input form with Dropdown
     function renderFormItems() {
         const formItemsArea = document.getElementById('form-items-area');
         formItemsArea.innerHTML = '';
         itemsState.forEach(item => {
             formItemsArea.innerHTML += `
                 <div class="form-item-row ios-card">
-                    <input type="text" value="${item.name}" oninput="handleItemInputChange(${item.id}, 'name', this.value)" placeholder="Item Name">
-                    <input type="number" value="${item.price}" oninput="handleItemInputChange(${item.id}, 'price', this.value)" placeholder="Price" style="max-width: 80px;">
-                    <input type="number" value="${item.quantity}" oninput="handleItemInputChange(${item.id}, 'quantity', this.value)" placeholder="Qty" style="max-width: 40px;">
-                    <span class="remove-item" onclick="removeFormItem(${item.id})">−</span>
+                    <select onchange="handleMenuChange(${item.id}, this.value)">
+                        ${generateMenuOptions(item.name)}
+                    </select>
+                    <input type="number" value="${item.price}" oninput="handleItemInputChange(${item.id}, 'price', this.value)" title="Harga" style="max-width: 70px;">
+                    <input type="number" value="${item.quantity}" oninput="handleItemInputChange(${item.id}, 'quantity', this.value)" title="Qty" style="max-width: 40px;">
+                    <span class="remove-item" onclick="removeFormItem(${item.id})" title="Hapus Item">−</span>
                 </div>`;
         });
     }
 
     // Calculate subtotal, grand total and update UI
     function updateCalculations() {
-        // Grand Subtotal
         const subtotalSum = itemsState.reduce((sum, item) => sum + (item.price * item.quantity), 0);
         document.getElementById('in-sum-subtotal').value = formatCurrency(subtotalSum);
 
-        // Update Ongkos Kirim pada Struk
         const shipping = parseInt(document.getElementById('in-sum-ongkir').value) || 0;
         document.getElementById('out-receipt-ongkir').innerText = formatCurrency(shipping);
 
-        // Grand Total
         const totalSum = subtotalSum + shipping;
         document.getElementById('in-sum-total').value = formatCurrency(totalSum);
         document.getElementById('out-grand-total').innerText = formatCurrency(totalSum).replace('IDR ', '');
@@ -412,7 +473,6 @@ BCA 0375514741 A/N Syifana Rahma</pre>
     // Image capture and download
     function downloadImage() {
         const receiptPreview = document.getElementById('receipt-preview-area');
-        // scale ke 3 agar gambarnya jernih (high res)
         html2canvas(receiptPreview, { scale: 3, backgroundColor: "#ffffff" }).then(canvas => {
             const link = document.createElement('a');
             link.download = 'Receipt-' + document.getElementById('in-id').value + '.png';
@@ -422,6 +482,7 @@ BCA 0375514741 A/N Syifana Rahma</pre>
     }
 
     // Initial load
+    setCurrentDateTime(); // Dipanggil pertama kali agar form terisi waktu saat ini
     renderFormItems();
     updateReceipt();
 </script>
