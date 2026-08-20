@@ -192,6 +192,9 @@
                     <input type="tel" id="in-bus-phone" value="+6285729317184" oninput="updateReceipt()">
                 </div>
                 <div class="ios-row">
+                    <label>Business Email</label>
+                    <input type="email" id="in-bus-email" placeholder="me@example.com" oninput="updateReceipt()">
+                </div>
                 <div class="ios-row">
                     <label>Business Website</label>
                     <input type="text" id="in-bus-web" value="Instagram: @tualang.tanur" oninput="updateReceipt()">
@@ -244,10 +247,7 @@ BCA 0375514741 A/N Syifana Rahma</textarea>
     <!-- Right Column: Live Preview (monospace style) -->
     <div class="right-preview">
         <div class="receipt-card" id="receipt-preview-area">
-            <!-- Tambahan Logo -->
-    <div class="center">
-        <img src="logo.png" style="max-width: 220px; margin-bottom: 10px;">
-    </div>
+            <div class="center bold judul" id="out-bus-name">TUALANG TANUR</div>
             <div class="center">
                 <div id="out-bus-addr">Jl. Kaliurang km. 10, Ngaglik,<br>Sleman</div>
                 <div id="out-bus-phone">+6285729317184</div>
@@ -256,7 +256,7 @@ BCA 0375514741 A/N Syifana Rahma</textarea>
             
             <br>
             <div class="flex">
-                <div><span id="out-id">TNR00121</span></div>
+                <div><span id="out-id">TNR00121</span> -<br>Customer</div>
                 <div id="out-datetime" style="text-align: right;">20 Aug 2026 7:32 pm</div>
             </div>
 
