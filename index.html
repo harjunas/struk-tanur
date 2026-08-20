@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Struk Digital Tualang Tanur</title>
+    <title>Receipt Generator Pro - Tualang Tanur</title>
+    <!-- Library untuk html to image capture -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         body {
@@ -14,164 +15,263 @@
             justify-content: center;
             padding: 20px;
         }
-        .container {
+        .main-wrapper {
             display: flex;
             gap: 40px;
-            max-width: 1000px;
+            max-width: 1200px;
             width: 100%;
             flex-wrap: wrap;
-            align-items: flex-start;
         }
         
-        /* --- iOS Form Styling --- */
-        .form-section {
+        /* Form Styling (iOS-style) */
+        .left-form {
             flex: 1;
-            min-width: 320px;
-            max-width: 450px;
+            min-width: 340px;
+            max-width: 500px;
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
         .ios-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-        }
-        .ios-header h2 { margin: 0; font-size: 20px; font-weight: 600; }
-        .section-title {
+            margin-bottom: 25px;
             color: #007aff;
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            margin: 20px 0 8px 15px;
+            font-weight: 500;
         }
-        .ios-card {
-            background: white;
+        .ios-header h2 { margin: 0; color: black; font-weight: 600; font-size: 20px; }
+        .ios-header .action { font-size: 16px; cursor: pointer; }
+        .form-section {
+            margin-bottom: 25px;
+        }
+        .form-section-title {
+            color: #007aff;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        .ios-input-group {
+            background-color: white;
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
-        .ios-input-group {
-            display: flex;
-            flex-direction: column;
+        .ios-row {
             padding: 12px 15px;
             border-bottom: 1px solid #e5e5ea;
+            display: flex;
+            flex-direction: column;
         }
-        .ios-input-group:last-child { border-bottom: none; }
-        .ios-input-group label {
-            font-size: 12px;
+        .ios-row:last-child { border-bottom: none; }
+        .ios-row label {
+            font-size: 13px;
             color: #8e8e93;
-            margin-bottom: 4px;
+            margin-bottom: 5px;
         }
-        .ios-input-group input {
+        .ios-row input {
             border: none;
             font-size: 16px;
+            color: black;
+            width: 100%;
+            padding: 0;
             outline: none;
-            background: transparent;
-            color: #000;
         }
+        .ios-row input::placeholder { color: #c7c7cc; }
+        .ios-row textarea {
+            border: none;
+            font-size: 15px;
+            resize: none;
+            outline: none;
+            padding: 0;
+            margin-top: 5px;
+        }
+        .items-area { margin-top: 15px; }
+        .add-item-btn {
+            background-color: #007aff;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .add-item-btn:hover { background-color: #0056b3; }
+        .form-item-row {
+            display: flex;
+            gap: 10px;
+            background-color: #f2f2f7;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .form-item-row input { flex: 1; min-width: 50px; }
+        .remove-item { color: #ff3b30; cursor: pointer; font-size: 20px; font-weight: bold;}
+
+        /* Receipt Styling (monospace/thermal) */
+        .right-preview {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+        .receipt-card {
+            background-color: white;
+            width: 340px;
+            padding: 30px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            color: black;
+            line-height: 1.2;
+        }
+        .center { text-align: center; }
+        .bold { font-weight: 900; }
+        .judul { font-size: 24px; letter-spacing: 1px; margin-bottom: 15px;}
+        .flex { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .divider { border-bottom: 1px solid black; margin: 15px 0; }
         .download-btn {
             background-color: #007aff;
             color: white;
             border: none;
             padding: 14px;
             width: 100%;
-            border-radius: 10px;
+            max-width: 340px;
+            border-radius: 12px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            margin-top: 25px;
+            margin-top: 30px;
             box-shadow: 0 4px 6px rgba(0, 122, 255, 0.2);
         }
-        .download-btn:active { background-color: #0056b3; }
-
-        /* --- Receipt Styling --- */
-        .receipt-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            flex: 1;
-        }
-        .struk-kertas {
-            background-color: white;
-            width: 320px;
-            padding: 30px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 14px;
-            color: #000;
-            box-shadow: 0px 8px 20px rgba(0,0,0,0.15);
-        }
-        .center { text-align: center; }
-        .flex { display: flex; justify-content: space-between; margin-bottom: 5px; }
-        .divider { border-bottom: 1px solid #000; margin: 15px 0; }
-        .judul { font-size: 24px; font-weight: 900; letter-spacing: 1px; margin-bottom: 15px;}
-        .bold { font-weight: bold; }
+        .download-btn:hover { background-color: #0056b3; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <!-- Area Input Form (iOS Style) -->
-    <div class="form-section">
+<div class="main-wrapper">
+    <!-- Left Column: Input Form (iOS style) -->
+    <div class="left-form">
         <div class="ios-header">
-            <span style="color: #007aff; font-size: 16px;">&lt;</span>
+            <span class="action">&lt;</span>
             <h2>Receipt</h2>
-            <span style="color: #007aff; font-size: 16px;">Save</span>
+            <span class="action">Save</span>
         </div>
 
-        <div class="section-title">Receipt Info</div>
-        <div class="ios-card">
+        <div class="form-section">
+            <div class="form-section-title">Receipt Info</div>
             <div class="ios-input-group">
-                <label>Receipt ID</label>
-                <input type="text" id="in-id" value="TNR00121" oninput="updateStruk()">
-            </div>
-            <div class="ios-input-group">
-                <label>Customer Name</label>
-                <input type="text" id="in-cust" value="Nicken" oninput="updateStruk()">
+                <div class="ios-row">
+                    <label>Receipt ID</label>
+                    <input type="text" id="in-id" value="TNR00121" oninput="updateReceipt()">
+                </div>
+                <div class="ios-row">
+                    <label>Created Datetime</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="date" id="in-date" value="2026-08-20" oninput="updateReceipt()">
+                        <input type="time" id="in-time" value="19:32" oninput="updateReceipt()">
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="section-title">Items</div>
-        <div class="ios-card">
+        <div class="form-section">
+            <div class="form-section-title">Business</div>
             <div class="ios-input-group">
-                <label>Harga Pampis Cakalang (IDR)</label>
-                <input type="number" id="in-harga" value="49500" oninput="updateStruk()">
-            </div>
-            <div class="ios-input-group">
-                <label>Ongkos Kirim (IDR)</label>
-                <input type="number" id="in-ongkir" value="15000" oninput="updateStruk()">
+                <div class="ios-row">
+                    <label>Business Name</label>
+                    <input type="text" id="in-bus-name" value="TUALANG TANUR" oninput="updateReceipt()">
+                </div>
+                <div class="ios-row">
+                    <label>Business Phone</label>
+                    <input type="tel" id="in-bus-phone" value="+6285729317184" oninput="updateReceipt()">
+                </div>
+                <div class="ios-row">
+                    <label>Business Email</label>
+                    <input type="email" id="in-bus-email" placeholder="me@example.com" oninput="updateReceipt()">
+                </div>
+                <div class="ios-row">
+                    <label>Business Website</label>
+                    <input type="text" id="in-bus-web" value="Instagram: @tualang.tanur" oninput="updateReceipt()">
+                </div>
+                <div class="ios-row">
+                    <label>Business Address</label>
+                    <textarea id="in-bus-addr" rows="2" oninput="updateReceipt()">Jl. Kaliurang km. 10, Ngaglik, Sleman</textarea>
+                </div>
             </div>
         </div>
-        
-        <button class="download-btn" onclick="downloadImage()">Download as Image</button>
+
+        <div class="form-section">
+            <div class="form-section-title">Items</div>
+            <div id="form-items-area" class="items-area">
+                <!-- Items are dynamically added here -->
+            </div>
+            <button class="add-item-btn" onclick="addFormItem()">+ Add Item</button>
+        </div>
+
+        <div class="form-section">
+            <div class="form-section-title">Summary</div>
+            <div class="ios-input-group">
+                <div class="ios-row">
+                    <label>Subtotal (Auto)</label>
+                    <input type="text" id="in-sum-subtotal" value="0" readonly style="color: #8e8e93;">
+                </div>
+                <div class="ios-row">
+                    <label>Ongkos Kirim (IDR)</label>
+                    <input type="number" id="in-sum-ongkir" value="15000" oninput="updateCalculations()">
+                </div>
+                <div class="ios-row">
+                    <label>Total (Auto)</label>
+                    <input type="text" id="in-sum-total" value="0" readonly style="font-weight: 600; color: #007aff;">
+                </div>
+                <div class="ios-row">
+                    <label>Payment Method</label>
+                    <input type="text" id="in-sum-payment" value="Cash" oninput="updateReceipt()">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="form-section-title">Other Data</div>
+            <div class="ios-input-group">
+                <div class="ios-row">
+                    <label>QRCode Data</label>
+                    <input type="text" id="in-other-qr" placeholder="url, text, Anything" oninput="updateReceipt()">
+                </div>
+                <div class="ios-row">
+                    <label>Footer Message</label>
+                    <textarea id="in-other-footer" rows="2" oninput="updateReceipt()">Thank you for your purchase &hearts;
+BCA 0375514741 A/N Syifana Rahma</textarea>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Area Preview Struk -->
-    <div class="receipt-section">
-        <div class="struk-kertas" id="struk-preview">
-            <div class="center judul">TUALANG TANUR</div>
+    <!-- Right Column: Live Preview (monospace style) -->
+    <div class="right-preview">
+        <div class="receipt-card" id="receipt-preview-area">
+            <div class="center bold judul" id="out-bus-name">TUALANG TANUR</div>
             <div class="center">
-                Jl. Kaliurang km. 10, Ngaglik, Sleman<br>
-                +6285729317184<br>
-                Instagram: @tualang.tanur
+                <div id="out-bus-addr">Jl. Kaliurang km. 10, Ngaglik,<br>Sleman</div>
+                <div id="out-bus-phone">+6285729317184</div>
+                <div id="out-bus-web">Instagram: @tualang.tanur</div>
             </div>
             
             <br>
             <div class="flex">
-                <div><span id="out-id">TNR00121</span> -<br><span id="out-cust">Nicken</span></div>
-                <div id="out-date"></div>
+                <div><span id="out-id">TNR00121</span> -<br>Customer</div>
+                <div id="out-datetime" style="text-align: right;">20 Aug 2026 7:32 pm</div>
             </div>
 
             <div class="divider"></div>
 
-            <div class="flex">
-                <div>Pampis Cakalang 250gr<br>(PS)<br>1 x IDR<span id="out-harga">49,500</span></div>
-                <div>IDR<span id="out-harga-total">49,500</span></div>
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="flex">
-                <div>Ongkir<br>1 x IDR<span id="out-ongkir">15,000</span></div>
-                <div>IDR<span id="out-ongkir-total">15,000</span></div>
+            <div id="out-items-list">
+                <!-- Items lists updated dynamically -->
             </div>
 
             <div class="divider"></div>
@@ -183,49 +283,143 @@
 
             <br><br>
             <div class="center">
-                Thank you for your purchase &hearts;<br>
-                BCA 0375514741 A/N Syifana Rahma
+                <pre id="out-other-footer" style="font-family: inherit; margin: 0; white-space: pre-line;">Thank you for your purchase &hearts;
+BCA 0375514741 A/N Syifana Rahma</pre>
             </div>
         </div>
+
+        <button class="download-btn" onclick="downloadImage()">⬇ Download Receipt as Image (PNG)</button>
     </div>
 </div>
 
 <script>
-    // Format tanggal
-    const now = new Date();
-    const options = { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
-    document.getElementById('out-date').innerText = now.toLocaleString('en-GB', options).replace(',', '');
+    // State of items
+    let itemsState = [
+        { id: Date.now(), name: "Pampis Cakalang 250gr (PS)", price: 49500, quantity: 1 }
+    ];
 
-    // Live update angka
-    function updateStruk() {
-        const id = document.getElementById('in-id').value;
-        const cust = document.getElementById('in-cust').value;
-        const harga = parseInt(document.getElementById('in-harga').value) || 0;
-        const ongkir = parseInt(document.getElementById('in-ongkir').value) || 0;
-        const total = harga + ongkir;
-
-        document.getElementById('out-id').innerText = id;
-        document.getElementById('out-cust').innerText = cust;
-        
-        document.getElementById('out-harga').innerText = harga.toLocaleString('en-US');
-        document.getElementById('out-harga-total').innerText = harga.toLocaleString('en-US');
-        
-        document.getElementById('out-ongkir').innerText = ongkir.toLocaleString('en-US');
-        document.getElementById('out-ongkir-total').innerText = ongkir.toLocaleString('en-US');
-        
-        document.getElementById('out-grand-total').innerText = total.toLocaleString('en-US');
+    // Format currency to IDR 49,500
+    function formatCurrency(amount) {
+        return amount.toLocaleString('en-US', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace('IDR', 'IDR ');
     }
 
-    // Fitur Download Gambar Resolusi Tinggi
+    // Format Date from input to "20 Aug 2026"
+    function formatDate(dateStr) {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
+    // Format Time from input to "7:32 pm"
+    function formatTime(timeStr) {
+        const timeParts = timeStr.split(':');
+        const date = new Date();
+        date.setHours(timeParts[0]);
+        date.setMinutes(timeParts[1]);
+        return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+    }
+
+    // Live update dynamic text on the receipt
+    function updateReceipt() {
+        // Direct text fields
+        document.getElementById('out-bus-name').innerText = document.getElementById('in-bus-name').value;
+        document.getElementById('out-bus-phone').innerText = document.getElementById('in-bus-phone').value;
+        document.getElementById('out-bus-web').innerText = document.getElementById('in-bus-web').value;
+        document.getElementById('out-bus-addr').innerHTML = document.getElementById('in-bus-addr').value.replace(/\n/g, '<br>');
+        document.getElementById('out-id').innerText = document.getElementById('in-id').value;
+        document.getElementById('out-other-footer').innerText = document.getElementById('in-other-footer').value;
+
+        // Datetime formatting
+        const dateValue = document.getElementById('in-date').value;
+        const timeValue = document.getElementById('in-time').value;
+        if (dateValue && timeValue) {
+            document.getElementById('out-datetime').innerHTML = formatDate(dateValue) + " " + formatTime(timeValue);
+        }
+
+        // Re-render items and totals
+        renderReceiptItems();
+        updateCalculations();
+    }
+
+    // Render item rows in the preview
+    function renderReceiptItems() {
+        const outItemsArea = document.getElementById('out-items-list');
+        outItemsArea.innerHTML = '';
+        itemsState.forEach(item => {
+            const itemSubtotal = item.price * item.quantity;
+            outItemsArea.innerHTML += `
+                <div class="flex">
+                    <div>${item.name}<br>${item.quantity} x ${formatCurrency(item.price)}</div>
+                    <div>${formatCurrency(itemSubtotal)}</div>
+                </div>`;
+        });
+    }
+
+    // Add a new item to the state and update everything
+    function addFormItem() {
+        itemsState.push({ id: Date.now(), name: "Pampis Cakalang TP", price: 49500, quantity: 1 });
+        renderFormItems();
+        updateReceipt();
+    }
+
+    // Remove an item and update everything
+    function removeFormItem(idToRemove) {
+        itemsState = itemsState.filter(item => item.id !== idToRemove);
+        renderFormItems();
+        updateReceipt();
+    }
+
+    // Handle price or quantity change per item
+    function handleItemInputChange(id, field, value) {
+        const itemIndex = itemsState.findIndex(item => item.id === id);
+        if (itemIndex !== -1) {
+            itemsState[itemIndex][field] = field === 'name' ? value : parseInt(value) || 0;
+            updateReceipt();
+        }
+    }
+
+    // Render item rows in the input form (to allow editing and removal)
+    function renderFormItems() {
+        const formItemsArea = document.getElementById('form-items-area');
+        formItemsArea.innerHTML = '';
+        itemsState.forEach(item => {
+            formItemsArea.innerHTML += `
+                <div class="form-item-row ios-card">
+                    <input type="text" value="${item.name}" oninput="handleItemInputChange(${item.id}, 'name', this.value)" placeholder="Item Name">
+                    <input type="number" value="${item.price}" oninput="handleItemInputChange(${item.id}, 'price', this.value)" placeholder="Price" style="max-width: 80px;">
+                    <input type="number" value="${item.quantity}" oninput="handleItemInputChange(${item.id}, 'quantity', this.value)" placeholder="Qty" style="max-width: 40px;">
+                    <span class="remove-item" onclick="removeFormItem(${item.id})">−</span>
+                </div>`;
+        });
+    }
+
+    // Calculate subtotal, grand total and update UI
+    function updateCalculations() {
+        // Grand Subtotal
+        const subtotalSum = itemsState.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        document.getElementById('in-sum-subtotal').value = formatCurrency(subtotalSum);
+
+        // Grand Total
+        const shipping = parseInt(document.getElementById('in-sum-ongkir').value) || 0;
+        const totalSum = subtotalSum + shipping;
+        document.getElementById('in-sum-total').value = formatCurrency(totalSum);
+        document.getElementById('out-grand-total').innerText = formatCurrency(totalSum).replace('IDR', '');
+    }
+
+    // Image capture and download
     function downloadImage() {
-        const struk = document.getElementById('struk-preview');
-        html2canvas(struk, { scale: 3, backgroundColor: "#ffffff" }).then(canvas => {
+        const receiptPreview = document.getElementById('receipt-preview-area');
+        // scale ke 3 agar gambarnya jernih (high res)
+        html2canvas(receiptPreview, { scale: 3, backgroundColor: "#ffffff" }).then(canvas => {
             const link = document.createElement('a');
-            link.download = 'Struk_' + document.getElementById('in-id').value + '.png';
+            link.download = 'Receipt-' + document.getElementById('in-id').value + '.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
         });
     }
+
+    // Initial load
+    renderFormItems();
+    updateReceipt();
 </script>
 
 </body>
